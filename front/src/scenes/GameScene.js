@@ -82,30 +82,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    const onGround = this.localSprite.body.touching.down;
-
-    if (this.keysWASD.left.isDown) {
-      this.localSprite.setVelocityX(-1000);
-      this.localSprite.flipX = true;
-    } else if (this.keysWASD.right.isDown) {
-      this.localSprite.setVelocityX(1000);
-      this.localSprite.flipX = false;
+    if (localPlayer === "player1") {
+      this.player1.update(this.keysWASD);
     } else {
-      this.localSprite.setVelocityX(0);
+      this.player2.update(this.keysWASD);
     }
-
-    if (this.keysWASD.up.isDown && onGround) {
-      this.localSprite.setVelocityY(-500);
-    }
-    this.localSprite.anims.play("idle", true);
-    /*
-    if (!onGround) {
-      this.localSprite.anims.play("jump", true);
-    } else if (this.localSprite.body.velocity.x !== 0) {
-      this.localSprite.anims.play("run", true);
-    } else {
-      this.localSprite.anims.play("idle", true);
-    }
-    */
   }
 }
