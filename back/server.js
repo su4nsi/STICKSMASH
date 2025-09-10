@@ -41,7 +41,8 @@ function tryStartMatch() {
     player1.join(roomId);
     player2.join(roomId);
 
-    io.to(roomId).emit("matchStart", { roomId });
+    io.to(player1.id).emit("matchStart", { roomId, yourPlayer: "player1" });
+    io.to(player2.id).emit("matchStart", { roomId, yourPlayer: "player2" });
     console.log("Partida iniciada en", roomId);
   }
 }
