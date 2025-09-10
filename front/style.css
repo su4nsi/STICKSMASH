@@ -1,5 +1,17 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
 #gameCanvas {
   display: none;
   background: #222;
   border: 2px solid white;
+}
+#gameContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
