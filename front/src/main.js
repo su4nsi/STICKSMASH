@@ -6,7 +6,7 @@ window.onload = () => {
 export let localPlayer = "player1";
 
 export function startPhaser(player) {
-  const localPlayer = player;
+  localPlayer = player;
   const config = {
     type: Phaser.CANVAS,
     width: 800,
@@ -30,7 +30,7 @@ function preload() {
   );
 }
 
-let player1, player2, cursors, keysWASD, platforms;
+let player1, player2, localSprite, cursors, keysWASD, platforms;
 
 function create() {
   // Plataformas
@@ -58,27 +58,15 @@ function create() {
   // Controles
   cursors = this.input.keyboard.createCursorKeys();
   keysWASD = this.input.keyboard.addKeys({ up: "W", left: "A", right: "D" });
+  localSprite = localPlayer === "player1" ? player1 : player2;
 }
 
 function update() {
-  // Mover solo al jugador local
-  if (localPlayer === "player1") {
-    if (cursors.left.isDown) player1.setVelocityX(-200);
-    else if (cursors.right.isDown) player1.setVelocityX(200);
-    else player1.setVelocityX(0);
+  // mover solo al jugador local
+  if (keysWASD.left.isDown) localSprite.setVelocityX(-200);
+  else if (keysWASD.right.isDown) localSprite.setVelocityX(200);
+  else localSprite.setVelocityX(0);
 
-    if (cursors.up.isDown && player1.body.touching.down)
-      player1.setVelocityY(-500);
-  }
-
-  if (localPlayer === "player2") {
-    if (keysWASD.left.isDown) player2.setVelocityX(-200);
-    else if (keysWASD.right.isDown) player2.setVelocityX(200);
-    else player2.setVelocityX(0);
-
-    if (keysWASD.up.isDown && player2.body.touching.down)
-      player2.setVelocityY(-500);
-  }
-
-  // El otro jugador permanece estático (por ahora)
+  if (keysWASD.up.isDown && localSprite.body.touching.down)
+    localSprite.setVelocityY(-500);
 }
