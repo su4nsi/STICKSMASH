@@ -31,7 +31,7 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player1.sprite, this.platforms);
     this.physics.add.collider(this.player2.sprite, this.platforms);
-
+    this.physics.add.collider(this.player2.sprite, this.player1.sprite);
     // Elegir el jugador local
     this.localSprite =
       localPlayer === "player1" ? this.player1.sprite : this.player2.sprite;
@@ -42,12 +42,14 @@ export class GameScene extends Phaser.Scene {
       left: "A",
       right: "D",
       space: "SPACE",
+      shift: "SHIFT",
+      dot: "PERIOD",
     });
     //animaciones
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("stickman", { start: 0, end: 0 }),
-      frameRate: 1,
+      frames: this.anims.generateFrameNumbers("stickman", { start: 0, end: 3 }),
+      frameRate: 10,
       repeat: -1,
     });
     this.anims.create({
@@ -62,13 +64,30 @@ export class GameScene extends Phaser.Scene {
     this.anims.create({
       key: "run",
       frames: this.anims.generateFrameNumbers("stickman", {
-        start: 20,
+        start: 21,
         end: 40,
       }),
       frameRate: 55,
       repeat: -1,
     });
-
+    this.anims.create({
+      key: "defend",
+      frames: this.anims.generateFrameNumbers("stickman", {
+        start: 41,
+        end: 43,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: "attack",
+      frames: this.anims.generateFrameNumbers("stickman", {
+        start: 43,
+        end: 45,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
     this.anims.create({
       key: "jump",
       frames: this.anims.generateFrameNumbers("stickman", {
