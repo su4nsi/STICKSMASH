@@ -17,14 +17,18 @@ export class Player {
     const onGround = this.sprite.body.touching.down;
 
     // horizontal movement
-    if (keys.left.isDown) {
-      this.sprite.setVelocityX(-1000);
-      this.sprite.flipX = true;
-    } else if (keys.right.isDown) {
-      this.sprite.setVelocityX(1000);
-      this.sprite.flipX = false;
-    } else {
+    if (keys.left.isDown && keys.right.isDown) {
       this.sprite.setVelocityX(0);
+    } else {
+      if (keys.left.isDown) {
+        this.sprite.setVelocityX(-1000);
+        this.sprite.flipX = true;
+      } else if (keys.right.isDown) {
+        this.sprite.setVelocityX(1000);
+        this.sprite.flipX = false;
+      } else {
+        this.sprite.setVelocityX(0);
+      }
     }
     // jump logic
     if (Phaser.Input.Keyboard.JustDown(keys.up)) {
