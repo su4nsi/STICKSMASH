@@ -17,7 +17,7 @@ export function startPhaser(player) {
     backgroundColor: "#222",
     physics: {
       default: "arcade",
-      arcade: { gravity: { y: 1000 }, debug: true },
+      arcade: { gravity: { y: 2000 }, debug: true, fps: 144 },
     },
     pixelArt: true,
     scene: [GameScene],

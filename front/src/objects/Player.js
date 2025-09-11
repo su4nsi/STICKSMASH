@@ -3,57 +3,87 @@ export class Player {
     this.scene = scene;
     this.sprite = scene.physics.add.sprite(x, y, "stickman");
     this.sprite.setTint(tint);
-    this.sprite.body.setSize(32, 128);
-    this.sprite.body.setOffset(48, 0);
+    this.sprite.body.setSize(64, 128);
+    this.sprite.body.setOffset(32, 0);
     this.sprite.setCollideWorldBounds(true);
+    this.didJump = false;
 
-    // Variables para salto variable
-    this.jumpHoldTime = 0;
-    this.maxJumpHold = 10; // frames de “suspensión” máxima
+    this.holdFrames = 0;
+    this.maxHoldFrames = 30;
+    this.isHolding = false;
   }
 
   update(keys) {
     const onGround = this.sprite.body.touching.down;
 
-    // Movimiento horizontal
+    // horizontal movement
     if (keys.left.isDown) {
-      this.sprite.setVelocityX(-400);
+      this.sprite.setVelocityX(-1000);
       this.sprite.flipX = true;
     } else if (keys.right.isDown) {
-      this.sprite.setVelocityX(400);
+      this.sprite.setVelocityX(1000);
       this.sprite.flipX = false;
     } else {
       this.sprite.setVelocityX(0);
     }
-
-    if (keys.up.isDown) {
-      if (onGround && !this.isJumping) {
-        this.sprite.setVelocityY(-1000); // impulso inicial
+    // jump logic
+    if (Phaser.Input.Keyboard.JustDown(keys.up)) {
+      if (onGround) {
+        this.sprite.setVelocityY(-1500); // primer salto
         this.isJumping = true;
-        this.jumpHoldTime = 0;
+        this.didJump = false;
+
+        this.sprite.anims.play("jump", true);
+      } else if (!onGround && !this.didJump) {
+        console.log("segundo salto");
+        this.sprite.setVelocityY(-1500); // segundo salto
+        this.didJump = true;
+        this.sprite.anims.play("secondjump", true);
       }
-    } else {
-      this.isJumping = false;
     }
-
-    // gravity
-    if (
-      !onGround &&
-      (!keys.up.isDown || this.jumpHoldTime >= this.maxJumpHold)
-    ) {
-      this.sprite.body.velocity.y += 35;
-    }
-
-    this.sprite.anims.play("idle", true);
-    /*
-    // Animaciones
     if (!onGround) {
-      this.sprite.anims.play("jump", true);
-    } else if (this.sprite.body.velocity.x !== 0) {
-      this.sprite.anims.play("run", true);
-    } else {
-      this.sprite.anims.play("idle", true);
+      if (keys.up.isDown) {
+        if (this.sprite.body.velocity.y < 0) {
+          this.sprite.body.velocity.y = Math.max(
+            //dynamic jump height
+            this.sprite.body.velocity.y,
+            -650
+          );
+        }
+      } else {
+        this.sprite.body.velocity.y += 50; // gravity boost
+      }
     }
-      */
+
+    //space hold
+    if (keys.space.isDown && !onGround) {
+      this.savedVelocityX = this.sprite.body.velocity.x;
+      if (this.holdFrames < this.maxHoldFrames) {
+        this.sprite.setVelocityY(0);
+        this.sprite.body.allowGravity = false;
+        this.holdFrames++;
+        console.log("hold");
+        this.sprite.setVelocityX(0);
+        this.sprite.anims.play("hold", true);
+      } else {
+        this.sprite.body.allowGravity = true;
+        this.sprite.body.velocity.y += 50;
+        this.sprite.anims.play("jump", true);
+        this.sprite.setVelocityX(this.savedVelocityX);
+        console.log("reset");
+      }
+    }
+    //flag reset
+    if (onGround && this.sprite.body.velocity.y === 0) {
+      this.isJumping = false;
+      this.didJump = false;
+      this.sprite.body.allowGravity = true;
+      this.holdFrames = 0;
+      if (this.sprite.body.velocity.x === 0) {
+        this.sprite.anims.play("idle", true);
+      } else {
+        this.sprite.anims.play("run", true);
+      }
+    }
   }
 }

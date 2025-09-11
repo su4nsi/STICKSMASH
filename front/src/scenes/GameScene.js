@@ -41,6 +41,7 @@ export class GameScene extends Phaser.Scene {
       up: "W",
       left: "A",
       right: "D",
+      space: "SPACE",
     });
     //animaciones
     this.anims.create({
@@ -49,25 +50,42 @@ export class GameScene extends Phaser.Scene {
       frameRate: 1,
       repeat: -1,
     });
-
+    this.anims.create({
+      key: "hold",
+      frames: this.anims.generateFrameNumbers("stickman", {
+        start: 14,
+        end: 14,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
     this.anims.create({
       key: "run",
       frames: this.anims.generateFrameNumbers("stickman", {
-        start: 22,
-        end: 47,
+        start: 20,
+        end: 40,
       }),
-      frameRate: 12,
+      frameRate: 55,
       repeat: -1,
     });
 
     this.anims.create({
       key: "jump",
       frames: this.anims.generateFrameNumbers("stickman", {
-        start: 21,
-        end: 40,
+        start: 28,
+        end: 32,
       }),
-      frameRate: 12,
-      repeat: -1,
+      frameRate: 25,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: "secondjump",
+      frames: this.anims.generateFrameNumbers("stickman", {
+        start: 28,
+        end: 32,
+      }),
+      frameRate: 25,
+      repeat: 0,
     });
 
     this.anims.create({
