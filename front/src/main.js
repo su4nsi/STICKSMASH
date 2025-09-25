@@ -6,9 +6,12 @@ window.onload = () => {
   initMenu();
 };
 
-export function startPhaser(player) {
+export function startPhaser(player, socket) {
   localPlayer = player;
-
+  if (window.phaserGame) {
+    window.phaserGame.destroy(true);
+    window.phaserGame = null;
+  }
   const config = {
     type: Phaser.CANVAS,
     width: 1350,
@@ -21,8 +24,8 @@ export function startPhaser(player) {
     },
     pixelArt: true,
 
-    scene: [GameScene],
+    scene: [new GameScene(localPlayer, socket)],
   };
 
-  new Phaser.Game(config);
+  window.phaserGame = new Phaser.Game(config);
 }

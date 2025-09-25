@@ -12,12 +12,24 @@ export class Player {
     this.guard = false;
   }
 
-  update(keys) {
+  update(keys, socket) {
     const onGround = this.sprite.body.touching.down;
 
     const MAX_SPEED = 1000;
     const ACCEL = 3500;
     const DECEL = 4300;
+
+    // send player state to server
+    if (socket) {
+      socket.emit("playerMove", {
+        x: this.sprite.x,
+        y: this.sprite.y,
+        flipX: this.sprite.flipX,
+        anim: this.sprite.anims.currentAnim
+          ? this.sprite.anims.currentAnim.key
+          : "idle",
+      });
+    }
 
     if (Phaser.Input.Keyboard.JustDown(keys.shift)) {
       this.guard = !this.guard;

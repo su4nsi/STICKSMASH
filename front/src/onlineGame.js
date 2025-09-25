@@ -14,11 +14,36 @@ export function runOnlineGame() {
 
   socket.emit("joinQueue");
 
+  socket.on("game_over", (info) => {
+    endGameAndReturnToMenu();
+  });
+
   socket.on("matchStart", (data) => {
     document.getElementById("menu").style.display = "none";
-
+    console.log("Match  started, room ID:", data.roomId);
     import("./main.js").then((module) => {
-      module.startPhaser(data.yourPlayer);
+      module.startPhaser(data.yourPlayer, socket);
     });
   });
+
+  function endGameAndReturnToMenu() {
+    console.log("Returning to menu");
+
+    const canvas = document.getElementById("gameCanvas");
+
+    canvas.style.display = "none";
+    document.getElementById("menu").style.display = "block";
+
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    if (window.phaserGame) {
+      window.phaserGame.destroy(true, false);
+      window.phaserGame = null;
+    }
+
+    if (socket) {
+      socket.removeAllListeners();
+      socket.disconnect();
+      socket = null;
+    }
+  }
 }

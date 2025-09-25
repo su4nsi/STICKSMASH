@@ -1,9 +1,10 @@
 import { Player } from "../objects/Player.js";
-import { localPlayer } from "../main.js";
 
 export class GameScene extends Phaser.Scene {
-  constructor() {
+  constructor(localPlayer, socket) {
     super("GameScene");
+    this.localPlayer = localPlayer;
+    this.socket = socket;
   }
 
   preload() {
@@ -18,25 +19,33 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    // Plataformas
+    this.socket.on("opponentMove", (data) => {
+      const opponent =
+        this.localPlayer === "player1" ? this.player2 : this.player1;
+      opponent.sprite.x = data.x;
+      opponent.sprite.y = data.y;
+      opponent.sprite.flipX = data.flipX;
+      opponent.sprite.anims.play(data.anim, true);
+    });
+
     this.platforms = this.physics.add.staticGroup();
     this.platforms
       .create(675, 730, "ground")
       .setScale(1350 / 400, 1)
       .refreshBody();
 
-    // Jugadores
     this.player1 = new Player(this, 100, 450, 0xff0000);
     this.player2 = new Player(this, 700, 450, 0x00ff00);
 
     this.physics.add.collider(this.player1.sprite, this.platforms);
     this.physics.add.collider(this.player2.sprite, this.platforms);
     this.physics.add.collider(this.player2.sprite, this.player1.sprite);
-    // Elegir el jugador local
-    this.localSprite =
-      localPlayer === "player1" ? this.player1.sprite : this.player2.sprite;
 
-    // Controles
+    this.localSprite =
+      this.localPlayer === "player1"
+        ? this.player1.sprite
+        : this.player2.sprite;
+
     this.keysWASD = this.input.keyboard.addKeys({
       up: "W",
       left: "A",
@@ -45,7 +54,7 @@ export class GameScene extends Phaser.Scene {
       shift: "SHIFT",
       dot: "PERIOD",
     });
-    //animaciones
+
     this.anims.create({
       key: "idle",
       frames: this.anims.generateFrameNumbers("stickman", { start: 0, end: 3 }),
@@ -106,7 +115,6 @@ export class GameScene extends Phaser.Scene {
       frameRate: 25,
       repeat: 0,
     });
-
     this.anims.create({
       key: "throw",
       frames: this.anims.generateFrameNumbers("stickman", {
@@ -119,10 +127,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    if (localPlayer === "player1") {
-      this.player1.update(this.keysWASD);
-    } else {
-      this.player2.update(this.keysWASD);
-    }
+    const localSprite =
+      this.localPlayer === "player1" ? this.player1 : this.player2;
+    localSprite.update(this.keysWASD, this.socket);
   }
 }
